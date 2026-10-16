@@ -4,89 +4,116 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La strada la trovi tu</title>
-<meta name="description" content="Corso AI: un cartone di due minuti e il foglio delle frasi per trovare la tua strada con la tua AI.">
+<meta name="description" content="Corso AI: un cartone di due minuti e mezzo e il foglio delle frasi per trovare la tua strada con la tua AI.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --sand:#f4efe6; --sand2:#e9dfcd; --ink:#24343b; --muted:#5d6b70;
-    --sea:#1f6f8b; --sea2:#5fa8bf; --terra:#c0572b; --sun:#f2b544; --leaf:#4f8a5b;
-    --card:#fffdf8; --line:#e2d6c1;
+    --sea:#1f6f8b; --terra:#c0572b; --sun:#f2b544; --card:#fffdf8; --line:#e2d6c1;
   }
   *{box-sizing:border-box}
   html,body{margin:0}
   body{background:var(--sand);color:var(--ink);font-family:Poppins,-apple-system,system-ui,sans-serif;font-weight:300;line-height:1.55}
-  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 40px}
+  .wrap{max-width:880px;margin:0 auto;padding:28px 16px 40px}
   .kicker{font-weight:500;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra);margin:0 0 6px}
   h1{font-family:Fraunces,Georgia,serif;font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0 0 10px;letter-spacing:-.01em}
-  .intro{font-size:16px;max-width:620px;margin:0 0 22px;color:var(--ink)}
+  .intro{font-size:16px;max-width:620px;margin:0 0 22px}
 
-  .player{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px -18px rgba(36,52,59,.45)}
-  .stage{display:block;width:100%;height:auto;background:#cfe7ee}
-  .sub{display:flex;gap:12px;align-items:flex-start;padding:14px 16px 6px;min-height:104px}
-  .avatar{flex:0 0 38px;height:38px;border-radius:50%;background:var(--terra);color:#fff;display:grid;place-items:center;font-family:Fraunces,serif;font-weight:700;font-size:18px}
+  .player{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 14px 34px -20px rgba(36,52,59,.5)}
+  .stagebox{position:relative;overflow:hidden;background:#cfe7ee}
+  .stage{display:block;width:100%;height:auto}
+  .start{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(20,40,48,.42);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);border:0;cursor:pointer;color:#fff;font:500 16px Poppins,sans-serif;width:100%}
+  .start .big{width:84px;height:84px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .2s}
+  .start:hover .big{transform:scale(1.06)}
+  .start .big svg{margin-left:6px}
+  .start small{font-weight:300;opacity:.9}
+  .start[hidden]{display:none}
+
+  .sub{display:flex;gap:12px;align-items:flex-start;padding:14px 16px 6px;min-height:106px}
+  .bot{flex:0 0 46px;width:46px;height:46px}
   .who{font-weight:500;font-size:12px;color:var(--terra);letter-spacing:.06em;text-transform:uppercase}
   .line{font-size:17px;line-height:1.45;font-weight:400;margin-top:2px}
-  .line .cursor{display:inline-block;width:2px;height:1em;background:var(--terra);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
-  @keyframes blink{50%{opacity:0}}
   .controls{display:flex;align-items:center;gap:8px;padding:8px 12px 12px}
-  .btn{appearance:none;border:1px solid var(--line);background:var(--sand);color:var(--ink);border-radius:999px;height:38px;min-width:38px;padding:0 12px;font:500 14px Poppins,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+  .btn{appearance:none;border:1px solid var(--line);background:var(--sand);color:var(--ink);border-radius:999px;height:38px;min-width:38px;padding:0 12px;font:500 14px Poppins,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
   .btn:hover{background:var(--sand2)}
   .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
   .bar{flex:1;height:6px;background:var(--sand2);border-radius:99px;overflow:hidden;cursor:pointer}
   .bar i{display:block;height:100%;width:0;background:var(--terra)}
   .time{font-size:12px;color:var(--muted);min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
 
-  .sheet{margin-top:26px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:var(--sea);color:#fff;border-radius:18px;padding:22px}
+  .sheet{margin-top:26px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:var(--sea);color:#fff;border-radius:20px;padding:22px}
   .sheet h2{font-family:Fraunces,serif;font-weight:600;font-size:24px;margin:0 0 4px}
   .sheet p{margin:0;color:#d9edf3;font-size:15px}
   .dl{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--sea);text-decoration:none;font-weight:600;padding:12px 18px;border-radius:999px;white-space:nowrap}
   .dl:hover{background:var(--sand)}
   footer{margin-top:26px;font-size:12px;color:var(--muted);text-align:center}
-  @media (max-width:560px){
-    .sheet{grid-template-columns:1fr}
-    .line{font-size:16px}
-    .sub{min-height:128px}
-  }
+  @media (max-width:560px){ .sheet{grid-template-columns:1fr} .line{font-size:16px} .sub{min-height:130px} #prev,#next{display:none} }
 
-  /* ---------- scene ---------- */
-  .scene{opacity:0;transition:opacity .6s ease;pointer-events:none}
+  /* ---------- animazioni ---------- */
+  .scene{opacity:0;transition:opacity .7s ease;pointer-events:none}
   .scene.on{opacity:1}
-  .paused .scene *{animation-play-state:paused !important}
-  .scene.on .pop{animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
-  .scene.on .pop.d1{animation-delay:.5s}.scene.on .pop.d2{animation-delay:1s}.scene.on .pop.d3{animation-delay:1.6s}
+  .paused .scene *, .paused .bot *{animation-play-state:paused !important}
+  .tb{transform-box:fill-box;transform-origin:center}
+  .scene.on .cam{animation:cam 22s ease-out both}
+  @keyframes cam{from{transform:scale(1.0)}to{transform:scale(1.05)}}
+  .cam{transform-origin:400px 260px}
+  .scene.on .pop{animation:pop .7s cubic-bezier(.2,1.5,.4,1) both}
+  .scene.on .d1{animation-delay:.6s}.scene.on .d2{animation-delay:1.2s}.scene.on .d3{animation-delay:1.9s}.scene.on .d4{animation-delay:2.6s}
   @keyframes pop{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
-  .bob{animation:bob 3s ease-in-out infinite}
-  @keyframes bob{50%{transform:translateY(-4px)}}
-  .wave{animation:wave 6s ease-in-out infinite}
-  @keyframes wave{50%{transform:translateX(-30px)}}
-  .scene.on .fly{animation:fly 2.4s ease-in-out infinite}
-  .scene.on .fly.f2{animation-delay:.8s}.scene.on .fly.f3{animation-delay:1.6s}
-  @keyframes fly{0%{transform:translate(0,0) rotate(-8deg);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translate(300px,-120px) rotate(6deg);opacity:0}}
-  .scene.on .hand{animation:spin 2s linear infinite}
+  .bob{animation:bob 3.2s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-5px)}}
+  .float{animation:float 4s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-10px)}}
+  .blink{animation:blink 4.6s infinite;transform-box:fill-box;transform-origin:center}
+  @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+  .cloud{animation:cloud 40s linear infinite}
+  .cloud.c2{animation-duration:60s;animation-delay:-20s}
+  @keyframes cloud{from{transform:translateX(-200px)}to{transform:translateX(900px)}}
+  .wave{animation:wave 7s ease-in-out infinite}
+  .wave.w2{animation-duration:9s;animation-direction:reverse}
+  @keyframes wave{50%{transform:translateX(-36px)}}
+  .glint{animation:glint 2.4s ease-in-out infinite}
+  @keyframes glint{50%{opacity:.2}}
+  .scene.on .fly{animation:fly 2.6s ease-in-out infinite}
+  .scene.on .fly.f2{animation-delay:.85s}.scene.on .fly.f3{animation-delay:1.7s}
+  @keyframes fly{0%{transform:translate(0,0) rotate(-10deg) scale(.8);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translate(290px,-150px) rotate(8deg) scale(1);opacity:0}}
+  .scene.on .hand{animation:spin 2.2s linear infinite}
+  .scene.on .hand2{animation:spin 26s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .scene.on .oops{animation:oops 4s ease-in-out infinite}
-  @keyframes oops{0%,20%{opacity:0;transform:scale(.5)}30%,60%{opacity:1;transform:scale(1)}75%,100%{opacity:0;transform:scale(1)}}
-  .scene.on .back{animation:back 4s ease-in-out infinite}
-  @keyframes back{0%,55%{opacity:0}70%,90%{opacity:1}100%{opacity:0}}
-  .scene.on .deflate{animation:deflate 7s ease-in-out both}
-  @keyframes deflate{0%{transform:scale(.2);opacity:0}10%{transform:scale(1.08);opacity:1}16%,55%{transform:scale(1)}70%{transform:scale(.55) rotate(-8deg)}100%{transform:scale(.35) rotate(-14deg);opacity:.25}}
-  .scene.on .then{animation:fadein 1s ease 5.5s both}
-  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .sign rect{fill:#fff;stroke:#c9b99c;transition:fill .5s,stroke .5s}
-  .sign text{fill:#9a8a70;transition:fill .5s}
-  .sign.lit rect{fill:var(--sun);stroke:var(--terra)}
+  .scene.on .oops{animation:oops 4.4s ease-in-out infinite}
+  @keyframes oops{0%,20%{opacity:0;transform:scale(.4)}30%,60%{opacity:1;transform:scale(1)}75%,100%{opacity:0;transform:scale(1)}}
+  .scene.on .back{animation:back 4.4s ease-in-out infinite}
+  @keyframes back{0%,55%{opacity:0}68%,90%{opacity:1}100%{opacity:0}}
+  .scene.on .sweat{animation:sweat 2.2s ease-in infinite}
+  @keyframes sweat{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(22px);opacity:0}}
+  .scene.on .deflate{animation:deflate 8s ease-in-out both}
+  @keyframes deflate{0%{transform:scale(.2);opacity:0}9%{transform:scale(1.08);opacity:1}15%,52%{transform:scale(1)}68%{transform:scale(.6) rotate(-8deg)}100%{transform:scale(.4) rotate(-15deg);opacity:.25}}
+  .scene.on .then{animation:fadein 1s ease 6s both}
+  @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .sign rect.board{fill:#fffaf0;stroke:#cdbd9f;transition:fill .6s,stroke .6s}
+  .sign text{fill:#a2927a;transition:fill .6s}
+  .sign .post{fill:#bba98a;transition:fill .6s}
+  .sign.lit rect.board{fill:var(--sun);stroke:var(--terra)}
   .sign.lit text{fill:var(--ink)}
   .sign.lit .post{fill:var(--terra)}
-  .sign .post{fill:#b9a88a;transition:fill .5s}
-  .scene.on .env{animation:env 3s ease-in-out infinite}
-  @keyframes env{0%{transform:translate(0,0);opacity:0}15%{opacity:1}80%{opacity:1}100%{transform:translate(330px,-40px);opacity:0}}
-  .scene.on .check{stroke-dasharray:80;stroke-dashoffset:80;animation:draw .8s ease 1.2s forwards}
+  .walker{transition:transform 1.6s cubic-bezier(.45,0,.3,1)}
+  .scene.on .env{animation:env 3.2s ease-in-out infinite}
+  @keyframes env{0%{transform:translate(0,0) rotate(-6deg);opacity:0}15%{opacity:1}80%{opacity:1}100%{transform:translate(300px,-70px) rotate(8deg);opacity:0}}
+  .scene.on .check{stroke-dasharray:80;stroke-dashoffset:80;animation:draw .8s ease 1.8s forwards}
   @keyframes draw{to{stroke-dashoffset:0}}
   .scene.on .point{animation:point 1.4s ease-in-out infinite}
   @keyframes point{50%{transform:translate(-8px,6px)}}
-  .tb{transform-box:fill-box;transform-origin:center}
+  .scene.on .conf{animation:conf 3.6s ease-in infinite}
+  @keyframes conf{0%{transform:translateY(-40px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(420px) rotate(540deg);opacity:0}}
+  .scene.on .spark{animation:spark 1.8s ease-in-out infinite}
+  @keyframes spark{50%{transform:scale(.4);opacity:.3}}
+  .mouth{transform-box:fill-box;transform-origin:center}
+  .talking .mouth{animation:talk .22s ease-in-out infinite alternate}
+  @keyframes talk{from{transform:scaleY(.35)}to{transform:scaleY(1.25)}}
+  .bot .eyes{animation:blink 3.8s infinite;transform-box:fill-box;transform-origin:center}
+  .bot .antenna{animation:glint 1.6s ease-in-out infinite}
   @media (prefers-reduced-motion:reduce){.scene *{animation-duration:.01s !important;animation-iteration-count:1 !important}}
 </style>
 </head>
@@ -94,190 +121,278 @@
 <div class="wrap">
   <p class="kicker">Corso AI · per Elisa</p>
   <h1>La strada la trovi tu</h1>
-  <p class="intro">Un cartone di un paio di minuti, poi il foglio con le frasi per cominciare. Parte da solo: mettiti comoda.</p>
+  <p class="intro">Un cartone di due minuti e mezzo, poi il foglio con le frasi per cominciare. Alza il volume.</p>
 
-  <div class="player" id="player">
+  <div class="player paused" id="player">
+    <div class="stagebox">
     <svg class="stage" viewBox="0 0 800 450" role="img" aria-label="Cartone animato">
       <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe0ea"/><stop offset="1" stop-color="#f6ead6"/></linearGradient>
-        <linearGradient id="room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7efe1"/><stop offset="1" stop-color="#eadcc4"/></linearGradient>
-        <!-- personaggi riutilizzabili -->
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd3e3"/><stop offset=".65" stop-color="#e6f2ef"/><stop offset="1" stop-color="#fbe9cf"/></linearGradient>
+        <linearGradient id="sea1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ea3bd"/><stop offset="1" stop-color="#2b7e98"/></linearGradient>
+        <linearGradient id="sea2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a7f99"/><stop offset="1" stop-color="#1c6178"/></linearGradient>
+        <linearGradient id="sandg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3e2bf"/><stop offset="1" stop-color="#e4cb9c"/></linearGradient>
+        <linearGradient id="room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf1df"/><stop offset="1" stop-color="#f0dfc2"/></linearGradient>
+        <linearGradient id="sunset" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7c784"/><stop offset="1" stop-color="#f2a36b"/></linearGradient>
+        <radialGradient id="glow"><stop offset="0" stop-color="#fff3c9" stop-opacity=".9"/><stop offset="1" stop-color="#fff3c9" stop-opacity="0"/></radialGradient>
+        <radialGradient id="cheek"><stop offset="0" stop-color="#ef8f7c" stop-opacity=".55"/><stop offset="1" stop-color="#ef8f7c" stop-opacity="0"/></radialGradient>
+
+        <!-- Elisa -->
         <g id="elisa">
-          <ellipse cx="0" cy="168" rx="46" ry="8" fill="#000" opacity=".08"/>
-          <path d="M-30 160 L-24 92 Q0 80 24 92 L30 160 Z" fill="#c0572b"/>
-          <rect x="-22" y="158" width="16" height="10" rx="4" fill="#24343b"/><rect x="6" y="158" width="16" height="10" rx="4" fill="#24343b"/>
-          <path d="M-26 -2 Q-34 50 -22 78 L22 78 Q34 50 26 -2 Q0 -30 -26 -2Z" fill="#3a2a22"/>
-          <rect x="-6" y="64" width="12" height="16" fill="#e9b996"/>
-          <circle cx="0" cy="40" r="26" fill="#f1c6a3"/>
-          <path d="M-27 34 Q-24 6 0 8 Q26 6 27 34 Q12 22 -4 24 Q-18 26 -27 34Z" fill="#3a2a22"/>
-          <circle cx="-9" cy="42" r="2.6" fill="#24343b"/><circle cx="9" cy="42" r="2.6" fill="#24343b"/>
-          <path d="M-7 53 Q0 58 7 53" stroke="#a0522d" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <circle cx="-15" cy="50" r="4" fill="#e8907a" opacity=".45"/><circle cx="15" cy="50" r="4" fill="#e8907a" opacity=".45"/>
-          <path d="M22 96 Q40 110 30 128" stroke="#f1c6a3" stroke-width="9" fill="none" stroke-linecap="round"/>
-          <rect x="22" y="112" width="18" height="30" rx="4" fill="#24343b"/><rect x="24.5" y="115" width="13" height="23" rx="2" fill="#7fc3d6"/>
+          <ellipse cx="0" cy="176" rx="50" ry="9" fill="#000" opacity=".1"/>
+          <path d="M-46 -6 C-62 60 -54 110 -34 128 L34 128 C54 110 62 60 46 -6 C30 -44 -30 -44 -46 -6Z" fill="#3b2a24"/>
+          <rect x="-20" y="168" width="17" height="10" rx="5" fill="#2d3a40"/><rect x="3" y="168" width="17" height="10" rx="5" fill="#2d3a40"/>
+          <path d="M-16 150 L-14 170 M14 150 L14 170" stroke="#e9b896" stroke-width="9" stroke-linecap="round"/>
+          <path d="M-34 156 C-36 120 -30 96 -24 88 Q0 78 24 88 C30 96 36 120 34 156 Z" fill="#c0572b"/>
+          <path d="M-33 128 H33 M-34 142 H34" stroke="#fff" stroke-width="3" opacity=".55"/>
+          <rect x="-7" y="74" width="14" height="16" rx="5" fill="#e9b896"/>
+          <path d="M-24 92 C-40 104 -38 124 -26 132" stroke="#e9b896" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M24 92 C40 102 42 116 30 126" stroke="#e9b896" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <g transform="rotate(-12 30 122)"><rect x="20" y="104" width="20" height="34" rx="5" fill="#24343b"/><rect x="22.5" y="107.5" width="15" height="26" rx="3" fill="#8fd0e2"/></g>
+          <circle cx="0" cy="38" r="38" fill="#f4caa8"/>
+          <path d="M-40 34 C-40 -6 -12 -10 0 -8 C14 -10 40 -4 40 30 C30 12 16 6 2 10 C-12 4 -28 14 -40 34Z" fill="#3b2a24"/>
+          <path d="M-38 30 C-42 50 -44 62 -40 70" stroke="#3b2a24" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <path d="M38 30 C42 50 44 62 40 70" stroke="#3b2a24" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <g class="blink"><ellipse cx="-13" cy="40" rx="4.6" ry="6" fill="#24343b"/><ellipse cx="13" cy="40" rx="4.6" ry="6" fill="#24343b"/><circle cx="-11.5" cy="37.5" r="1.6" fill="#fff"/><circle cx="14.5" cy="37.5" r="1.6" fill="#fff"/></g>
+          <path d="M-20 28 Q-13 24 -6 27 M6 27 Q13 24 20 28" stroke="#3b2a24" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          <circle cx="-22" cy="52" r="9" fill="url(#cheek)"/><circle cx="22" cy="52" r="9" fill="url(#cheek)"/>
+          <path d="M-8 56 Q0 63 8 56" stroke="#a24a2e" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          <circle cx="-38" cy="48" r="3" fill="#f2b544"/><circle cx="38" cy="48" r="3" fill="#f2b544"/>
         </g>
+
+        <!-- Giuseppe: barba, niente occhiali -->
         <g id="giuseppe">
-          <ellipse cx="0" cy="168" rx="48" ry="8" fill="#000" opacity=".08"/>
-          <path d="M-34 160 L-28 90 Q0 78 28 90 L34 160 Z" fill="#1f6f8b"/>
-          <rect x="-24" y="158" width="18" height="10" rx="4" fill="#24343b"/><rect x="6" y="158" width="18" height="10" rx="4" fill="#24343b"/>
-          <rect x="-7" y="64" width="14" height="16" fill="#e2b08c"/>
-          <circle cx="0" cy="40" r="27" fill="#ebbd98"/>
-          <path d="M-27 34 Q-26 8 0 9 Q26 8 27 34 Q22 20 0 20 Q-22 20 -27 34Z" fill="#9aa0a3"/>
-          <circle cx="-10" cy="42" r="7" fill="none" stroke="#24343b" stroke-width="2"/><circle cx="10" cy="42" r="7" fill="none" stroke="#24343b" stroke-width="2"/>
-          <path d="M-3 42 H3" stroke="#24343b" stroke-width="2"/>
-          <circle cx="-10" cy="42" r="2.3" fill="#24343b"/><circle cx="10" cy="42" r="2.3" fill="#24343b"/>
-          <path d="M-8 55 Q0 60 8 55" stroke="#8a4b2e" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <path d="M-28 96 Q-44 112 -26 126" stroke="#ebbd98" stroke-width="9" fill="none" stroke-linecap="round"/>
-          <path d="M28 96 Q44 112 26 126" stroke="#ebbd98" stroke-width="9" fill="none" stroke-linecap="round"/>
-          <rect x="-18" y="112" width="36" height="22" rx="4" fill="#24343b"/><rect x="-15" y="115" width="30" height="16" rx="2" fill="#7fc3d6"/>
+          <ellipse cx="0" cy="176" rx="54" ry="9" fill="#000" opacity=".1"/>
+          <rect x="-24" y="168" width="20" height="10" rx="5" fill="#2d3a40"/><rect x="4" y="168" width="20" height="10" rx="5" fill="#2d3a40"/>
+          <path d="M-16 148 L-15 170 M15 148 L15 170" stroke="#3d4f57" stroke-width="12" stroke-linecap="round"/>
+          <path d="M-38 152 C-40 118 -34 96 -26 88 Q0 78 26 88 C34 96 40 118 38 152 Z" fill="#1f6f8b"/>
+          <path d="M-12 86 L0 98 L12 86" fill="#e7f1f4"/>
+          <rect x="-8" y="72" width="16" height="16" rx="5" fill="#e2b18d"/>
+          <path d="M-26 94 C-44 106 -40 126 -20 128" stroke="#1f6f8b" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <path d="M26 94 C44 106 40 126 20 128" stroke="#1f6f8b" stroke-width="12" fill="none" stroke-linecap="round"/>
+          <rect x="-18" y="112" width="36" height="24" rx="5" fill="#24343b"/><rect x="-15" y="115" width="30" height="18" rx="3" fill="#8fd0e2"/>
+          <circle cx="-20" cy="128" r="6" fill="#e2b18d"/><circle cx="20" cy="128" r="6" fill="#e2b18d"/>
+          <circle cx="0" cy="38" r="38" fill="#ecbf9b"/>
+          <circle cx="-38" cy="42" r="6" fill="#e2b18d"/><circle cx="38" cy="42" r="6" fill="#e2b18d"/>
+          <path d="M-36 30 C-38 0 -14 -10 2 -8 C22 -8 40 4 36 30 C30 16 20 12 8 13 C-6 8 -26 14 -36 30Z" fill="#5a4a42"/>
+          <path d="M-14 4 Q-4 0 4 4 M10 6 Q18 4 24 10" stroke="#9c8e86" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".9"/>
+          <path d="M-37 40 C-38 66 -22 82 0 82 C22 82 38 66 37 40 C33 52 28 58 20 60 C12 54 -12 54 -20 60 C-28 58 -33 52 -37 40Z" fill="#5a4a42"/>
+          <path d="M-30 58 Q-26 70 -18 74 M30 58 Q26 70 18 74" stroke="#8c7d74" stroke-width="2" fill="none" opacity=".7"/>
+          <path d="M-14 56 C-8 52 -3 53 0 55 C3 53 8 52 14 56 C8 59 -8 59 -14 56Z" fill="#4a3c35"/>
+          <path d="M-7 63 Q0 68 7 63" stroke="#7a3b25" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          <g class="blink"><ellipse cx="-13" cy="38" rx="4.2" ry="5.4" fill="#24343b"/><ellipse cx="13" cy="38" rx="4.2" ry="5.4" fill="#24343b"/><circle cx="-11.6" cy="36" r="1.4" fill="#fff"/><circle cx="14.4" cy="36" r="1.4" fill="#fff"/></g>
+          <path d="M-21 27 Q-13 22 -6 26 M6 26 Q13 22 21 27" stroke="#4a3c35" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+          <path d="M0 40 Q3 48 -1 50" stroke="#c99472" stroke-width="2.2" fill="none" stroke-linecap="round"/>
         </g>
-        <g id="shot"><rect x="-13" y="-22" width="26" height="44" rx="4" fill="#24343b"/><rect x="-10.5" y="-18" width="21" height="34" rx="2" fill="#dff1f6"/><rect x="-7" y="-13" width="14" height="3" fill="#1f6f8b"/><rect x="-7" y="-7" width="10" height="2.5" fill="#9fb6bd"/><rect x="-7" y="-2" width="12" height="2.5" fill="#9fb6bd"/><rect x="-7" y="5" width="9" height="6" rx="2" fill="#c0572b"/></g>
+
+        <!-- Claudio, il robottino -->
+        <g id="claudio">
+          <line x1="0" y1="-44" x2="0" y2="-30" stroke="#24343b" stroke-width="3"/>
+          <circle class="antenna" cx="0" cy="-47" r="5" fill="#f2b544"/>
+          <rect x="-36" y="-32" width="72" height="58" rx="20" fill="#c0572b"/>
+          <rect x="-27" y="-23" width="54" height="38" rx="12" fill="#24343b"/>
+          <g class="blink"><circle cx="-11" cy="-6" r="5" fill="#8fe3f0"/><circle cx="11" cy="-6" r="5" fill="#8fe3f0"/></g>
+          <path d="M-7 6 Q0 11 7 6" stroke="#8fe3f0" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          <ellipse cx="0" cy="36" rx="20" ry="7" fill="#000" opacity=".08"/>
+          <circle cx="-38" cy="0" r="6" fill="#a8471f"/><circle cx="38" cy="0" r="6" fill="#a8471f"/>
+        </g>
+        <g id="shot"><rect x="-14" y="-24" width="28" height="48" rx="5" fill="#24343b"/><rect x="-11" y="-20" width="22" height="38" rx="3" fill="#e6f5f9"/><rect x="-7" y="-15" width="14" height="3" fill="#1f6f8b"/><rect x="-7" y="-9" width="11" height="2.5" fill="#9fb6bd"/><rect x="-7" y="-4" width="13" height="2.5" fill="#9fb6bd"/><rect x="-7" y="4" width="10" height="7" rx="2" fill="#c0572b"/></g>
+        <g id="umbrella"><path d="M0 0 V92" stroke="#7b6a55" stroke-width="3"/><path d="M-46 8 Q0 -34 46 8 Z" fill="#f4f0e6"/><path d="M-46 8 Q-30 -16 -15 -12 Q-14 -2 -15 8Z M15 8 Q14 -2 15 -12 Q30 -16 46 8Z" fill="#c0572b"/><path d="M-15 8 Q0 -8 15 8" fill="none"/></g>
+        <g id="cloudshape"><ellipse cx="0" cy="0" rx="34" ry="12" fill="#fff" opacity=".9"/><ellipse cx="-14" cy="-8" rx="16" ry="12" fill="#fff" opacity=".9"/><ellipse cx="10" cy="-10" rx="18" ry="14" fill="#fff" opacity=".9"/></g>
+
+        <g id="beach">
+          <rect width="800" height="450" fill="url(#sky)"/>
+          <circle cx="655" cy="92" r="90" fill="url(#glow)"/>
+          <circle cx="655" cy="92" r="38" fill="#f6c255"/>
+          <g class="cloud"><use href="#cloudshape" x="80" y="70"/></g>
+          <g class="cloud c2"><use href="#cloudshape" x="300" y="110" transform="scale(.8)"/></g>
+          <g transform="translate(735 222)"><rect x="-7" y="-60" width="14" height="60" fill="#fff"/><rect x="-7" y="-46" width="14" height="10" fill="#c0572b"/><rect x="-7" y="-24" width="14" height="10" fill="#c0572b"/><rect x="-10" y="-70" width="20" height="10" rx="2" fill="#24343b"/><path d="M-10 -70 L0 -82 L10 -70Z" fill="#c0572b"/></g>
+          <g class="wave"><path d="M-60 250 Q40 236 140 250 T340 250 T540 250 T740 250 T940 250 V450 H-60Z" fill="url(#sea1)"/></g>
+          <g class="glint"><path d="M520 262 h40 M600 276 h26 M140 270 h34 M260 284 h22" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity=".7"/></g>
+          <g class="wave w2"><path d="M-40 300 Q60 288 160 300 T360 300 T560 300 T760 300 T960 300 V450 H-40Z" fill="url(#sea2)"/></g>
+          <path d="M-20 300 Q60 314 160 306 T360 312 T560 304 T820 310" stroke="#fff" stroke-width="3" fill="none" opacity=".6"/>
+          <path d="M0 336 Q200 314 400 330 T800 320 V450 H0Z" fill="url(#sandg)"/>
+          <g fill="#d9bd88" opacity=".6"><circle cx="90" cy="400" r="2"/><circle cx="300" cy="420" r="2"/><circle cx="520" cy="396" r="2"/><circle cx="690" cy="430" r="2"/><circle cx="430" cy="440" r="2"/></g>
+        </g>
       </defs>
 
-      <!-- SCENA 1: la richiesta -->
-      <g class="scene" data-s="1">
-        <rect width="800" height="450" fill="url(#sky)"/>
-        <circle class="pop tb" cx="660" cy="90" r="44" fill="#f2b544" opacity=".9"/>
-        <g class="wave"><path d="M-40 300 Q60 285 160 300 T360 300 T560 300 T760 300 T960 300 V450 H-40Z" fill="#5fa8bf"/></g>
-        <path d="M-10 330 Q90 318 190 330 T390 330 T590 330 T790 330 T990 330 V450 H-10Z" fill="#1f6f8b" opacity=".85"/>
-        <path d="M0 375 Q200 355 400 372 T800 362 V450 H0Z" fill="#ecd9b4"/>
-        <g transform="translate(270 215)"><g class="bob"><use href="#elisa"/></g></g>
+      <!-- SCENA 1 -->
+      <g class="scene" data-s="1"><g class="cam">
+        <use href="#beach"/>
+        <use href="#umbrella" x="620" y="292"/>
+        <use href="#umbrella" x="700" y="312" transform="translate(0 0)"/>
+        <g transform="translate(250 196)"><g class="bob"><use href="#elisa"/></g></g>
         <g class="pop d1 tb">
-          <path d="M340 120 h300 a20 20 0 0 1 20 20 v52 a20 20 0 0 1 -20 20 h-250 l-34 24 l6 -24 h-22 a20 20 0 0 1 -20 -20 v-52 a20 20 0 0 1 20 -20z" fill="#fff" stroke="#24343b" stroke-width="2"/>
-          <text x="490" y="160" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="25" fill="#24343b">Un link per i miei ospiti</text>
-          <text x="490" y="190" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" fill="#5d6b70">tutto mio · aggiornabile · solo da iPhone</text>
+          <path d="M346 110 h296 a22 22 0 0 1 22 22 v58 a22 22 0 0 1 -22 22 h-238 l-40 28 l8 -28 h-26 a22 22 0 0 1 -22 -22 v-58 a22 22 0 0 1 22 -22z" fill="#fff" stroke="#24343b" stroke-width="2.5"/>
+          <text x="494" y="154" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="26" fill="#24343b">Un link per i miei ospiti</text>
+          <text x="494" y="186" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" fill="#5d6b70">tutto mio · aggiornabile · solo da iPhone</text>
         </g>
-      </g>
+      </g></g>
 
-      <!-- SCENA 2: la fatica -->
-      <g class="scene" data-s="2">
+      <!-- SCENA 2 -->
+      <g class="scene" data-s="2"><g class="cam">
         <rect width="800" height="450" fill="url(#room)"/>
-        <rect x="0" y="372" width="800" height="78" fill="#d9c7a7"/>
-        <rect x="80" y="330" width="260" height="14" rx="4" fill="#a87a52"/>
-        <g transform="translate(200 175)"><g class="bob"><use href="#giuseppe"/></g></g>
-        <g transform="translate(250 270)">
+        <g transform="translate(70 50)">
+          <rect width="220" height="150" rx="10" fill="url(#sunset)" stroke="#a87a52" stroke-width="8"/>
+          <circle cx="150" cy="96" r="22" fill="#fbe2a0"/>
+          <path d="M0 108 Q55 100 110 108 T220 106 V150 H0Z" fill="#2b7e98"/>
+          <path d="M110 0 V150 M0 75 H220" stroke="#a87a52" stroke-width="5"/>
+        </g>
+        <path d="M0 360 H800 V450 H0Z" fill="#d8c3a0"/>
+        <path d="M0 360 H800" stroke="#c4ab84" stroke-width="3"/>
+        <g transform="translate(250 330)"><rect x="-150" y="0" width="300" height="16" rx="5" fill="#a87a52"/><rect x="-130" y="16" width="12" height="70" fill="#8f6744"/><rect x="118" y="16" width="12" height="70" fill="#8f6744"/><rect x="-60" y="-26" width="44" height="26" rx="4" fill="#fff"/><path d="M-16 -18 h8 v10 h-8" stroke="#fff" stroke-width="4" fill="none"/><path d="M-50 -34 q4 -8 0 -14 M-38 -34 q4 -8 0 -14" stroke="#c4ab84" stroke-width="2" fill="none"/></g>
+        <g transform="translate(250 160)"><use href="#giuseppe"/></g>
+        <g class="sweat" transform="translate(296 176)"><path d="M0 0 Q6 10 0 14 Q-6 10 0 0Z" fill="#8fd0e2"/></g>
+        <g transform="translate(290 270)">
           <g class="fly"><use href="#shot"/></g>
           <g class="fly f2"><use href="#shot"/></g>
           <g class="fly f3"><use href="#shot"/></g>
         </g>
-        <g transform="translate(590 110)">
-          <rect x="-90" y="-50" width="180" height="120" rx="18" fill="#fff" stroke="#24343b" stroke-width="2"/>
-          <path d="M-44 68 L-60 96 L-20 68" fill="#fff" stroke="#24343b" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M-43 68 H-21" stroke="#fff" stroke-width="3"/>
-          <circle cx="-62" cy="-22" r="13" fill="#c0572b"/><text x="-62" y="-16" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="15" fill="#fff">C</text>
-          <text x="-40" y="-17" font-family="Poppins,sans-serif" font-weight="500" font-size="15" fill="#24343b">Passo dopo:</text>
-          <rect x="-70" y="0" width="140" height="8" rx="4" fill="#d6e6ea"/>
-          <rect x="-70" y="16" width="110" height="8" rx="4" fill="#d6e6ea"/>
-          <rect x="-70" y="32" width="125" height="8" rx="4" fill="#d6e6ea"/>
+        <g transform="translate(620 120)">
+          <rect x="-96" y="-56" width="192" height="122" rx="20" fill="#fff" stroke="#24343b" stroke-width="2.5"/>
+          <path d="M-36 64 L-56 92 L-14 64" fill="#fff" stroke="#24343b" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M-34 64 H-16" stroke="#fff" stroke-width="4"/>
+          <text x="0" y="-22" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="20" fill="#24343b">Passo dopo:</text>
+          <rect x="-72" y="-4" width="144" height="9" rx="4.5" fill="#d6e6ea"/>
+          <rect x="-72" y="14" width="112" height="9" rx="4.5" fill="#d6e6ea"/>
+          <rect x="-72" y="32" width="128" height="9" rx="4.5" fill="#d6e6ea"/>
         </g>
-        <g class="oops tb"><circle cx="110" cy="120" r="26" fill="#c0572b"/><path d="M99 109 L121 131 M121 109 L99 131" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
-        <g class="back"><path d="M150 70 Q90 60 82 105" stroke="#24343b" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M70 96 L82 112 L95 99" stroke="#24343b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="162" y="74" font-family="Poppins,sans-serif" font-size="14" fill="#24343b">indietro…</text></g>
-        <g transform="translate(560 300)">
-          <circle r="44" fill="#fff" stroke="#24343b" stroke-width="3"/>
-          <g fill="#24343b"><circle cy="-34" r="3"/><circle cx="34" r="3"/><circle cy="34" r="3"/><circle cx="-34" r="3"/></g>
-          <line x2="0" y2="-22" stroke="#24343b" stroke-width="4" stroke-linecap="round" transform="rotate(40)"/>
-          <g class="hand" style="transform-origin:0 0"><line x2="0" y2="-34" stroke="#c0572b" stroke-width="3" stroke-linecap="round"/></g>
+        <g transform="translate(700 268)"><g class="float"><use href="#claudio"/></g></g>
+        <g class="oops tb"><circle cx="70" cy="262" r="24" fill="#c0572b"/><path d="M60 252 L80 272 M80 252 L60 272" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+        <g class="back"><path d="M150 300 Q80 296 62 318" stroke="#24343b" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M52 306 L60 324 L76 314" stroke="#24343b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="36" y="350" font-family="Poppins,sans-serif" font-weight="500" font-size="14" fill="#24343b">indietro…</text></g>
+        <g transform="translate(520 300)">
+          <circle r="38" fill="#fff" stroke="#24343b" stroke-width="3"/>
+          <g fill="#24343b"><circle cy="-29" r="2.6"/><circle cx="29" r="2.6"/><circle cy="29" r="2.6"/><circle cx="-29" r="2.6"/></g>
+          <g class="hand2" style="transform-origin:0 0"><line x2="0" y2="-18" stroke="#24343b" stroke-width="4" stroke-linecap="round"/></g>
+          <g class="hand" style="transform-origin:0 0"><line x2="0" y2="-29" stroke="#c0572b" stroke-width="3" stroke-linecap="round"/></g>
           <circle r="4" fill="#24343b"/>
-          <text y="74" text-anchor="middle" font-family="Fraunces,serif" font-weight="600" font-size="18" fill="#24343b">un pomeriggio intero</text>
         </g>
-      </g>
+      </g></g>
 
-      <!-- SCENA 3: funziona, ed e' questa pagina -->
-      <g class="scene" data-s="3">
-        <rect width="800" height="450" fill="#e7f2ee"/>
-        <circle cx="120" cy="380" r="160" fill="#d2e8e0"/><circle cx="720" cy="60" r="120" fill="#d2e8e0"/>
-        <g transform="translate(400 225)">
-          <rect x="-110" y="-205" width="220" height="410" rx="34" fill="#24343b"/>
-          <rect x="-98" y="-190" width="196" height="380" rx="24" fill="#fffdf8"/>
-          <rect x="-30" y="-184" width="60" height="12" rx="6" fill="#24343b"/>
-          <rect x="-88" y="-160" width="176" height="30" rx="10" fill="#efe7d9"/>
-          <text id="addr" x="0" y="-140" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="10.5" fill="#24343b">gmarsico74-tech.github.io/jesolo</text>
-          <text x="-80" y="-104" font-family="Poppins,sans-serif" font-weight="500" font-size="9" fill="#c0572b" letter-spacing="1">CORSO AI · PER ELISA</text>
-          <text x="-80" y="-80" font-family="Fraunces,serif" font-weight="700" font-size="21" fill="#24343b">La strada</text>
-          <text x="-80" y="-58" font-family="Fraunces,serif" font-weight="700" font-size="21" fill="#24343b">la trovi tu</text>
-          <rect x="-80" y="-42" width="160" height="92" rx="10" fill="#cfe7ee"/>
-          <circle cx="0" cy="4" r="20" fill="#fff" opacity=".85"/><path d="M-6 -6 L10 4 L-6 14Z" fill="#24343b"/>
-          <rect x="-80" y="62" width="160" height="7" rx="3.5" fill="#e2d6c1"/><rect x="-80" y="76" width="120" height="7" rx="3.5" fill="#e2d6c1"/>
-          <rect x="-80" y="96" width="160" height="58" rx="10" fill="#1f6f8b"/>
-          <rect x="-66" y="128" width="70" height="16" rx="8" fill="#fff"/>
-          <rect x="-66" y="108" width="100" height="8" rx="4" fill="#9ccbd9"/>
+      <!-- SCENA 3 -->
+      <g class="scene" data-s="3"><g class="cam">
+        <rect width="800" height="450" fill="#e4f1ec"/>
+        <circle cx="110" cy="390" r="170" fill="#d1e8de"/><circle cx="730" cy="50" r="130" fill="#d1e8de"/>
+        <g transform="translate(400 228)">
+          <rect x="-112" y="-206" width="224" height="412" rx="36" fill="#24343b"/>
+          <rect x="-100" y="-192" width="200" height="384" rx="26" fill="#fffdf8"/>
+          <rect x="-30" y="-186" width="60" height="12" rx="6" fill="#24343b"/>
+          <rect x="-90" y="-162" width="180" height="30" rx="10" fill="#efe7d9"/>
+          <text id="addr" x="0" y="-142" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="10.5" fill="#24343b">gmarsico74-tech.github.io/jesolo</text>
+          <text x="-82" y="-106" font-family="Poppins,sans-serif" font-weight="500" font-size="9" fill="#c0572b" letter-spacing="1">CORSO AI · PER ELISA</text>
+          <text x="-82" y="-82" font-family="Fraunces,serif" font-weight="700" font-size="21" fill="#24343b">La strada</text>
+          <text x="-82" y="-60" font-family="Fraunces,serif" font-weight="700" font-size="21" fill="#24343b">la trovi tu</text>
+          <rect x="-82" y="-44" width="164" height="94" rx="10" fill="#9fd3e3"/>
+          <path d="M-82 20 Q-40 10 0 20 T82 18 V40 a10 10 0 0 1 -10 10 h-144 a10 10 0 0 1 -10 -10Z" fill="#2b7e98"/>
+          <circle cx="40" cy="-20" r="10" fill="#f6c255"/>
+          <rect x="-82" y="62" width="164" height="7" rx="3.5" fill="#e2d6c1"/><rect x="-82" y="76" width="120" height="7" rx="3.5" fill="#e2d6c1"/>
+          <rect x="-82" y="96" width="164" height="60" rx="10" fill="#1f6f8b"/>
+          <rect x="-68" y="110" width="100" height="8" rx="4" fill="#9ccbd9"/><rect x="-68" y="128" width="70" height="16" rx="8" fill="#fff"/>
         </g>
-        <g transform="translate(610 210)"><g class="pop d2 tb">
-          <circle r="54" fill="#4f8a5b"/>
-          <path class="check" d="M-24 2 L-6 20 L26 -16" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          <text y="88" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="24" fill="#24343b">Funziona.</text>
-          <text y="112" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">da iPhone · gratis · pubblica</text>
+        <g transform="translate(615 205)"><g class="pop d2 tb">
+          <circle r="56" fill="#4f8a5b"/>
+          <path class="check" d="M-25 2 L-6 21 L27 -16" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <text y="92" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="26" fill="#24343b">Funziona.</text>
+          <text y="116" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">da iPhone · gratis · pubblica</text>
         </g></g>
         <g class="pop d3 tb">
-          <g class="point"><path d="M175 60 Q230 70 268 82" stroke="#c0572b" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M256 70 L272 84 L252 92" stroke="#c0572b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
-          <text x="40" y="52" font-family="Fraunces,serif" font-weight="600" font-size="19" fill="#24343b">Guarda l'indirizzo</text>
-          <text x="40" y="74" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">è una delle strade,</text>
-          <text x="40" y="92" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">non per forza la tua</text>
+          <g class="point"><path d="M178 66 Q232 76 270 88" stroke="#c0572b" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M258 76 L274 90 L254 98" stroke="#c0572b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+          <text x="40" y="56" font-family="Fraunces,serif" font-weight="600" font-size="20" fill="#24343b">Guarda l'indirizzo</text>
+          <text x="40" y="78" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">è una delle strade,</text>
+          <text x="40" y="96" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">non per forza la tua</text>
         </g>
-      </g>
+        <g transform="translate(120 300)"><g class="float"><use href="#claudio"/></g></g>
+        <g>
+          <rect class="conf" x="520" y="0" width="8" height="12" rx="2" fill="#c0572b"/>
+          <rect class="conf" x="580" y="0" width="8" height="12" rx="2" fill="#f2b544" style="animation-delay:.6s"/>
+          <rect class="conf" x="660" y="0" width="8" height="12" rx="2" fill="#1f6f8b" style="animation-delay:1.2s"/>
+          <rect class="conf" x="710" y="0" width="8" height="12" rx="2" fill="#4f8a5b" style="animation-delay:1.8s"/>
+          <rect class="conf" x="300" y="0" width="8" height="12" rx="2" fill="#f2b544" style="animation-delay:2.4s"/>
+          <rect class="conf" x="250" y="0" width="8" height="12" rx="2" fill="#c0572b" style="animation-delay:3s"/>
+        </g>
+      </g></g>
 
-      <!-- SCENA 4: il si' facile -->
-      <g class="scene" data-s="4">
-        <rect width="800" height="450" fill="#f6ead6"/>
-        <g opacity=".5"><circle cx="90" cy="90" r="6" fill="#c0572b"/><circle cx="720" cy="370" r="8" fill="#1f6f8b"/><circle cx="680" cy="80" r="5" fill="#f2b544"/><circle cx="130" cy="360" r="7" fill="#f2b544"/></g>
+      <!-- SCENA 4 -->
+      <g class="scene" data-s="4"><g class="cam">
+        <rect width="800" height="450" fill="#f7ead4"/>
+        <g opacity=".55"><circle cx="90" cy="90" r="7" fill="#c0572b"/><circle cx="720" cy="370" r="9" fill="#1f6f8b"/><circle cx="690" cy="80" r="6" fill="#f2b544"/><circle cx="130" cy="360" r="8" fill="#f2b544"/></g>
         <g class="deflate tb">
-          <path d="M210 110 h380 a30 30 0 0 1 30 30 v110 a30 30 0 0 1 -30 30 h-240 l-50 40 l10 -40 h-100 a30 30 0 0 1 -30 -30 v-110 a30 30 0 0 1 30 -30z" fill="#fff" stroke="#24343b" stroke-width="3"/>
-          <text x="400" y="218" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="56" fill="#c0572b">Sì, si può fare!</text>
+          <path d="M200 96 h400 a32 32 0 0 1 32 32 v116 a32 32 0 0 1 -32 32 h-250 l-54 42 l12 -42 h-108 a32 32 0 0 1 -32 -32 v-116 a32 32 0 0 1 32 -32z" fill="#fff" stroke="#24343b" stroke-width="3"/>
+          <text x="400" y="210" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="58" fill="#c0572b">Sì, si può fare!</text>
         </g>
         <g class="then">
-          <text x="400" y="392" text-anchor="middle" font-family="Fraunces,serif" font-weight="600" font-size="28" fill="#24343b">…e la strada?</text>
+          <g transform="translate(560 368)"><g class="float"><use href="#claudio"/></g></g>
+          <text x="420" y="378" text-anchor="end" font-family="Fraunces,serif" font-weight="600" font-size="30" fill="#24343b">…e la strada?</text>
         </g>
-      </g>
+      </g></g>
 
-      <!-- SCENA 5: il metodo -->
-      <g class="scene" data-s="5">
+      <!-- SCENA 5 -->
+      <g class="scene" data-s="5"><g class="cam">
         <rect width="800" height="450" fill="url(#sky)"/>
-        <path d="M0 330 Q200 300 400 320 T800 300 V450 H0Z" fill="#a9cf9f"/>
-        <path d="M0 360 Q200 335 400 355 T800 340 V450 H0Z" fill="#7fb07a"/>
-        <path d="M-20 430 C150 400 160 330 300 330 S520 300 600 270 S760 230 820 215" stroke="#ecd9b4" stroke-width="34" fill="none" stroke-linecap="round"/>
+        <g class="cloud"><use href="#cloudshape" x="120" y="60"/></g>
+        <path d="M0 300 Q200 266 400 288 T800 262 V450 H0Z" fill="#b5d8a8"/>
+        <path d="M0 350 Q200 322 400 344 T800 326 V450 H0Z" fill="#86b57f"/>
+        <path d="M-20 430 C150 400 160 330 300 330 S520 300 600 270 S760 230 820 215" stroke="#efdcb6" stroke-width="38" fill="none" stroke-linecap="round"/>
         <path d="M-20 430 C150 400 160 330 300 330 S520 300 600 270 S760 230 820 215" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="10 14" opacity=".8"/>
-        <g class="sign" data-sign="1" transform="translate(110 250)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">1</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Racconta cosa vuoi</text></g>
-        <g class="sign" data-sign="2" transform="translate(300 205)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">2</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Chiedi le strade</text></g>
-        <g class="sign" data-sign="3" transform="translate(495 175)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">3</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Scegli, chiedi i passi</text></g>
-        <g class="sign" data-sign="4" transform="translate(690 135)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">4</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Mettila alla prova</text></g>
-      </g>
+        <g class="sign" data-sign="1" transform="translate(110 230)"><rect class="post" x="-4" y="30" width="8" height="100"/><rect class="board" x="-82" y="-36" width="164" height="70" rx="14" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">1</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Racconta cosa vuoi</text></g>
+        <g class="sign" data-sign="2" transform="translate(300 190)"><rect class="post" x="-4" y="30" width="8" height="100"/><rect class="board" x="-82" y="-36" width="164" height="70" rx="14" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">2</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Chiedi le strade</text></g>
+        <g class="sign" data-sign="3" transform="translate(495 160)"><rect class="post" x="-4" y="30" width="8" height="100"/><rect class="board" x="-82" y="-36" width="164" height="70" rx="14" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">3</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Scegli, chiedi i passi</text></g>
+        <g class="sign" data-sign="4" transform="translate(690 122)"><rect class="post" x="-4" y="30" width="8" height="100"/><rect class="board" x="-82" y="-36" width="164" height="70" rx="14" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">4</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Mettila alla prova</text></g>
+        <g class="walker" id="walker" transform="translate(40 330)"><g transform="scale(.55)"><g class="bob"><use href="#elisa"/></g></g></g>
+      </g></g>
 
-      <!-- SCENA 6: la consegna -->
-      <g class="scene" data-s="6">
-        <rect width="800" height="450" fill="url(#sky)"/>
-        <g class="wave"><path d="M-40 320 Q60 305 160 320 T360 320 T560 320 T760 320 T960 320 V450 H-40Z" fill="#5fa8bf"/></g>
-        <path d="M0 380 Q200 360 400 377 T800 367 V450 H0Z" fill="#ecd9b4"/>
-        <g transform="translate(190 210)"><g class="bob"><use href="#elisa"/></g></g>
-        <g transform="translate(250 270)"><g class="env">
-          <rect x="-26" y="-18" width="52" height="36" rx="4" fill="#fff" stroke="#24343b" stroke-width="2"/>
-          <path d="M-26 -16 L0 4 L26 -16" fill="none" stroke="#24343b" stroke-width="2"/>
+      <!-- SCENA 6 -->
+      <g class="scene" data-s="6"><g class="cam">
+        <use href="#beach"/>
+        <use href="#umbrella" x="90" y="300"/>
+        <g transform="translate(220 196)"><g class="bob"><use href="#elisa"/></g></g>
+        <g transform="translate(300 300)"><g class="env">
+          <rect x="-28" y="-19" width="56" height="38" rx="5" fill="#fff" stroke="#24343b" stroke-width="2"/>
+          <path d="M-28 -17 L0 4 L28 -17" fill="none" stroke="#24343b" stroke-width="2"/>
+          <circle cx="0" cy="8" r="5" fill="#c0572b"/>
         </g></g>
-        <g transform="translate(620 180)">
-          <rect x="-90" y="-60" width="180" height="120" rx="18" fill="#fff" stroke="#24343b" stroke-width="2"/>
-          <text y="-24" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="19" fill="#24343b">La tua strada</text>
-          <text y="2" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">quale · perché</text>
-          <text y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">i passi · i dubbi</text>
-          <text y="46" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="12" fill="#c0572b">a Giuseppe e Claudio</text>
+        <g transform="translate(610 170)">
+          <rect x="-112" y="-78" width="224" height="150" rx="22" fill="#fff" stroke="#24343b" stroke-width="2.5"/>
+          <text y="-40" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="21" fill="#24343b">La tua strada</text>
+          <text y="-14" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13.5" fill="#5d6b70">quale · perché</text>
+          <text y="6" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13.5" fill="#5d6b70">i passi · i dubbi</text>
+          <g transform="translate(-34 46) scale(.42)"><use href="#giuseppe" y="-60"/></g>
+          <g transform="translate(34 50) scale(.5)"><use href="#claudio"/></g>
         </g>
-        <g class="pop d3 tb"><text x="620" y="300" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="32" fill="#24343b">Buona ricerca!</text></g>
-      </g>
+        <g class="pop d3 tb"><rect x="490" y="346" width="240" height="56" rx="28" fill="#fff" stroke="#24343b" stroke-width="2.5"/><text x="610" y="384" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="30" fill="#c0572b">Buona ricerca!</text></g>
+        <g class="spark"><path d="M470 300 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4z" fill="#f2b544" class="tb"/></g>
+        <g class="spark" style="animation-delay:.6s"><path d="M748 290 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3z" fill="#f2b544" class="tb"/></g>
+      </g></g>
     </svg>
+    <button class="start" id="start" aria-label="Guarda il cartone">
+      <span class="big"><svg width="30" height="34" viewBox="0 0 30 34"><path d="M2 2 L28 17 L2 32Z" fill="#24343b"/></svg></span>
+      <span>Guarda il cartone</span>
+      <small>con l'audio · 2 minuti e mezzo</small>
+    </button>
+    </div>
 
     <div class="sub">
-      <div class="avatar" aria-hidden="true">C</div>
+      <svg class="bot" viewBox="-44 -56 88 96" aria-hidden="true" id="botface">
+        <line x1="0" y1="-44" x2="0" y2="-30" stroke="#24343b" stroke-width="3"/>
+        <circle class="antenna" cx="0" cy="-47" r="5" fill="#f2b544"/>
+        <rect x="-36" y="-32" width="72" height="58" rx="20" fill="#c0572b"/>
+        <rect x="-27" y="-23" width="54" height="38" rx="12" fill="#24343b"/>
+        <g class="eyes"><circle cx="-11" cy="-8" r="5" fill="#8fe3f0"/><circle cx="11" cy="-8" r="5" fill="#8fe3f0"/></g>
+        <rect class="mouth" x="-9" y="3" width="18" height="6" rx="3" fill="#8fe3f0"/>
+      </svg>
       <div>
         <div class="who">Claudio</div>
-        <div class="line" id="line" aria-live="polite"></div>
+        <div class="line" id="line" aria-live="polite">Tocca il cartone per cominciare.</div>
       </div>
     </div>
     <div class="controls">
-      <button class="btn primary" id="play" aria-label="Pausa">❚❚</button>
+      <button class="btn primary" id="play" aria-label="Riproduci">▶</button>
       <button class="btn" id="prev" aria-label="Frase precedente">‹</button>
       <button class="btn" id="next" aria-label="Frase successiva">›</button>
       <div class="bar" id="bar" title="Vai a un punto"><i id="fill"></i></div>
       <span class="time" id="time">0:00</span>
-      <button class="btn" id="again" aria-label="Ricomincia">↺</button>
+      <button class="btn" id="mute" aria-label="Audio">🔊</button>
     </div>
+    <audio id="audio" src="cartone.mp3" preload="auto"></audio>
   </div>
 
   <section class="sheet">
@@ -288,113 +403,98 @@
     <a class="dl" href="frasi-per-la-tua-ai.pdf" download>Scarica il PDF ↓</a>
   </section>
 
-  <footer>Pagina pubblicata dall'iPhone · versione 3</footer>
+  <footer>Pagina pubblicata dall'iPhone · versione 4</footer>
 </div>
 
 <script>
 (function(){
-  var L = [
-    [1,"Ciao Elisa, sono Claudio."],
-    [1,"Ci hai chiesto una cosa precisa: un link tuo, da dare agli ospiti, che porti alla tua pagina."],
-    [1,"E che tu possa aggiornare da sola, solo con l'iPhone. Bella richiesta."],
-    [1,"Prima di risponderti, l'abbiamo provata."],
-    [2,"E ti dico la verità: non è stato uno schiocco di dita."],
-    [2,"Giuseppe si è messo lì con l'iPhone e io lo guidavo. Lui faceva uno screenshot e me lo mandava, io gli dicevo il passo dopo."],
-    [2,"Ha sbagliato bottone, è tornato indietro, ha trovato trabocchetti che nessuno ti racconta."],
-    [2,"Un pomeriggio così, insieme, in bella compagnia. Ma alla fine…"],
-    [3,"…ecco qua. La pagina che stai guardando adesso è proprio quella che abbiamo pubblicato noi: dall'iPhone, e gratis."],
-    [3,"È pubblica. Aprila da qualsiasi telefono o computer, anche da quello di un'amica: funziona."],
-    [3,"Guarda l'indirizzo in alto: dentro c'è il nome dello strumento che abbiamo usato noi."],
-    [3,"Non è detto che sia il migliore per te. È una delle strade, e il tuo lavoro sarà confrontarla con le altre."],
-    [4,"Adesso tocca a te. La strada non te la diamo noi, perché la cosa che vale davvero è imparare a trovarla."],
-    [4,"Prima, però, una cosa che a Giuseppe è costata centinaia di ore."],
-    [4,"Se chiedi all'AI «si può fare?», lei ti dice quasi sempre di sì."],
-    [4,"Il guaio è che poi la strada non te la dà."],
-    [5,"Allora fai così.",0],
-    [5,"Primo: racconta alla tua AI cosa vuoi e i tuoi paletti. Solo iPhone, un link che non cambia, che puoi aggiornare tu, gratis.",1],
-    [5,"Secondo: non chiederle se si può fare. Chiedile quali strade esistono, con pregi e difetti.",2],
-    [5,"Terzo: scegline una e chiedile i passi, uno alla volta.",3],
-    [5,"Quarto: mettila alla prova. Funziona davvero da iPhone? È gratis per sempre? Il link resta uguale?",4],
-    [5,"E se una risposta non ti convince, chiedi ancora.",4],
-    [6,"Non c'è una strada giusta e una sbagliata. Noi sappiamo che si può fare, e basta che la tua funzioni."],
-    [6,"Quando l'hai trovata, scrivici quale hai scelto, perché, i passi a grandi linee e i dubbi che ti restano."],
-    [6,"Qui sotto trovi il foglio con le frasi per cominciare. Buona ricerca!"]
-  ];
-  // durata di ogni frase: tempo di lettura comodo
-  var D = L.map(function(l){ return Math.max(3.2, l[1].length/13 + 1.2); });
-  var starts = [], tot = 0;
-  D.forEach(function(d){ starts.push(tot); tot += d; });
-
+  var T = {"starts": [2.0, 4.6, 11.314, 16.486, 20.599, 24.64, 33.557, 39.973, 45.404, 53.209, 59.75, 65.865, 74.033, 81.28, 86.158, 90.757, 94.953, 97.17, 105.632, 112.281, 116.429, 123.29, 127.912, 135.265, 142.363], "ends": [4.05, 10.764, 15.936, 19.299, 24.09, 33.007, 39.423, 44.104, 52.659, 59.2, 65.315, 72.733, 80.73, 85.608, 90.207, 93.653, 96.62, 105.082, 111.731, 115.879, 122.74, 126.612, 134.715, 141.813, 147.176], "total": 151.18, "lines": [[1, "Ciao Elisa, sono Claudio."], [1, "Ci hai chiesto una cosa precisa: un link tuo, da dare agli ospiti, che porti alla tua pagina."], [1, "E che tu possa aggiornare da sola, solo con l'iPhone. Bella richiesta."], [1, "Prima di risponderti, l'abbiamo provata."], [2, "E ti dico la verità: non è stato uno schiocco di dita."], [2, "Giuseppe si è messo lì con l'iPhone e io lo guidavo. Lui faceva uno screenshot e me lo mandava, io gli dicevo il passo dopo."], [2, "Ha sbagliato bottone, è tornato indietro, ha trovato trabocchetti che nessuno ti racconta."], [2, "Un pomeriggio così, insieme, in bella compagnia. Ma alla fine…"], [3, "…ecco qua. La pagina che stai guardando adesso è proprio quella che abbiamo pubblicato noi: dall'iPhone, e gratis."], [3, "È pubblica. Aprila da qualsiasi telefono o computer, anche da quello di un'amica: funziona."], [3, "Guarda l'indirizzo in alto: dentro c'è il nome dello strumento che abbiamo usato noi."], [3, "Non è detto che sia il migliore per te. È una delle strade, e il tuo lavoro sarà confrontarla con le altre."], [4, "Adesso tocca a te. La strada non te la diamo noi, perché la cosa che vale davvero è imparare a trovarla."], [4, "Prima, però, una cosa che a Giuseppe è costata centinaia di ore."], [4, "Se chiedi all'AI «si può fare?», lei ti dice quasi sempre di sì."], [4, "Il guaio è che poi la strada non te la dà."], [5, "Allora fai così.", 0], [5, "Primo: racconta alla tua AI cosa vuoi e i tuoi paletti. Solo iPhone, un link che non cambia, che puoi aggiornare tu, gratis.", 1], [5, "Secondo: non chiederle se si può fare. Chiedile quali strade esistono, con pregi e difetti.", 2], [5, "Terzo: scegline una e chiedile i passi, uno alla volta.", 3], [5, "Quarto: mettila alla prova. Funziona davvero da iPhone? È gratis per sempre? Il link resta uguale?", 4], [5, "E se una risposta non ti convince, chiedi ancora.", 4], [6, "Non c'è una strada giusta e una sbagliata. Noi sappiamo che si può fare, e basta che la tua funzioni."], [6, "Quando l'hai trovata, scrivici quale hai scelto, perché, i passi a grandi linee e i dubbi che ti restano."], [6, "Qui sotto trovi il foglio con le frasi per cominciare. Buona ricerca!"]]};
+  var L = T.lines, starts = T.starts, ends = T.ends, tot = T.total;
   var player = document.getElementById('player');
+  var audio = document.getElementById('audio');
   var lineEl = document.getElementById('line');
   var fill = document.getElementById('fill');
   var timeEl = document.getElementById('time');
   var playBtn = document.getElementById('play');
+  var muteBtn = document.getElementById('mute');
+  var startBtn = document.getElementById('start');
+  var bot = document.getElementById('botface');
+  var walker = document.getElementById('walker');
   var scenes = [].slice.call(document.querySelectorAll('.scene'));
   var signs = [].slice.call(document.querySelectorAll('.sign'));
+  var walkPos = [[40,330],[150,330],[340,292],[535,262],[725,224]];
 
   try{
     var h = location.host ? (location.host + location.pathname).replace(/\/(index\.html)?$/,'') : '';
     if(h) document.getElementById('addr').textContent = h;
   }catch(e){}
 
-  var t = 0, playing = true, last = null, curIdx = -1, curScene = 0;
+  var t = 0, playing = false, last = null, curIdx = -2, curScene = 0, useAudio = true, shownIdx = -1, shownN = -1;
 
-  function fmt(s){ s = Math.floor(s); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
-  function idxAt(x){ for(var i=starts.length-1;i>=0;i--) if(x>=starts[i]) return i; return 0; }
-
+  function fmt(s){ s = Math.max(0, Math.floor(s)); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+  function idxAt(x){ for(var i=starts.length-1;i>=0;i--) if(x>=starts[i]-0.05) return i; return -1; }
   function setScene(n){
-    if(n===curScene) return;
-    curScene = n;
+    if(n===curScene) return; curScene = n;
     scenes.forEach(function(g){
-      var on = +g.getAttribute('data-s')===n;
       g.classList.remove('on');
-      if(on){ void g.getBoundingClientRect(); g.classList.add('on'); }
+      if(+g.getAttribute('data-s')===n){ void g.getBoundingClientRect(); g.classList.add('on'); }
     });
   }
-
   function render(){
     var i = idxAt(t);
-    var l = L[i];
-    if(i!==curIdx){ curIdx = i; setScene(l[0]); }
-    var lit = l[0]===5 ? (l[2]||0) : 0;
+    var l = i<0 ? L[0] : L[i];
+    setScene(l[0]);
+    var lit = l[0]===5 && i>=0 ? (l[2]||0) : 0;
     signs.forEach(function(s){ s.classList.toggle('lit', +s.getAttribute('data-sign')<=lit); });
-    var into = t - starts[i];
-    var n = Math.min(l[1].length, Math.floor(into*34));
-    lineEl.innerHTML = '';
-    lineEl.appendChild(document.createTextNode(l[1].slice(0,n)));
-    if(n<l[1].length){ var c=document.createElement('span'); c.className='cursor'; lineEl.appendChild(c); }
+    var p = walkPos[lit]; walker.setAttribute('transform','translate('+p[0]+' '+p[1]+')');
+    var talking = playing && i>=0 && t < ends[i];
+    bot.classList.toggle('talking', talking);
+    if(i>=0){
+      var span = Math.max(.5, ends[i]-starts[i]);
+      var n = Math.min(l[1].length, Math.ceil(l[1].length * Math.min(1,(t-starts[i])/(span*.9))));
+      if(i!==shownIdx || n!==shownN){ lineEl.textContent = l[1].slice(0,n); shownIdx=i; shownN=n; }
+    }
     fill.style.width = (100*t/tot)+'%';
     timeEl.textContent = fmt(t);
   }
-
   function loop(ts){
     if(last===null) last = ts;
     var dt = (ts-last)/1000; last = ts;
     if(playing){
-      t += Math.min(dt, .25);
-      if(t>=tot){ t = tot - .001; setPlaying(false); }
+      if(useAudio && !audio.paused) t = audio.currentTime;
+      else if(!useAudio) t += Math.min(dt,.25);
+      if(t>=tot-.05){ t = tot; setPlaying(false); }
     }
     render();
     requestAnimationFrame(loop);
   }
-
   function setPlaying(p){
     playing = p;
     player.classList.toggle('paused', !p);
     playBtn.textContent = p ? '❚❚' : '▶';
     playBtn.setAttribute('aria-label', p ? 'Pausa' : 'Riproduci');
+    if(useAudio){
+      if(p){ var pr = audio.play(); if(pr && pr.catch) pr.catch(function(){ useAudio = false; }); }
+      else audio.pause();
+    }
   }
-  function jump(x){ t = Math.max(0, Math.min(tot-.001, x)); curIdx = -1; curScene = 0; }
+  function jump(x){
+    t = Math.max(0, Math.min(tot, x));
+    if(useAudio){ try{ audio.currentTime = t; }catch(e){} }
+  }
+  function begin(){ startBtn.hidden = true; if(t>=tot-.1) jump(0); setPlaying(true); }
 
-  playBtn.onclick = function(){ if(!playing && t>=tot-.01) jump(0); setPlaying(!playing); };
-  document.getElementById('again').onclick = function(){ jump(0); setPlaying(true); };
-  document.getElementById('prev').onclick = function(){ var i=idxAt(t); jump(starts[(t-starts[i]<1.2 && i>0)? i-1 : i]); };
+  startBtn.onclick = begin;
+  playBtn.onclick = function(){ if(!startBtn.hidden){ begin(); return; } if(!playing && t>=tot-.1) jump(0); setPlaying(!playing); };
+  document.getElementById('prev').onclick = function(){ var i=idxAt(t); jump(i<=0?0:starts[(t-starts[i]<1.5)? i-1 : i]); };
   document.getElementById('next').onclick = function(){ var i=idxAt(t); if(i<L.length-1) jump(starts[i+1]); };
   document.getElementById('bar').onclick = function(e){ var r=this.getBoundingClientRect(); jump(tot*(e.clientX-r.left)/r.width); };
-  document.addEventListener('visibilitychange', function(){ if(document.hidden) setPlaying(false); });
+  muteBtn.onclick = function(){ audio.muted = !audio.muted; muteBtn.textContent = audio.muted ? '🔇' : '🔊'; };
+  audio.addEventListener('error', function(){ useAudio = false; });
+  audio.addEventListener('ended', function(){ t = tot; setPlaying(false); });
+  document.addEventListener('visibilitychange', function(){ if(document.hidden && playing) setPlaying(false); });
 
-  setPlaying(true);
+  setScene(1);
   requestAnimationFrame(loop);
 })();
 </script>
