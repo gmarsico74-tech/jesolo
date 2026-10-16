@@ -3,16 +3,400 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prova Jesolo</title>
+<title>La strada la trovi tu</title>
+<meta name="description" content="Corso AI: un cartone di due minuti e il foglio delle frasi per trovare la tua strada con la tua AI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  body { font-family: -apple-system, sans-serif; background: #f4efe6; color: #2b2b2b; margin: 0; padding: 32px 20px; text-align: center; }
-  h1 { font-size: 28px; margin-bottom: 8px; }
-  .versione { display: inline-block; margin-top: 16px; padding: 8px 16px; border-radius: 20px; background: #c0572b; color: #fff; font-weight: 600; }
+  :root{
+    --sand:#f4efe6; --sand2:#e9dfcd; --ink:#24343b; --muted:#5d6b70;
+    --sea:#1f6f8b; --sea2:#5fa8bf; --terra:#c0572b; --sun:#f2b544; --leaf:#4f8a5b;
+    --card:#fffdf8; --line:#e2d6c1;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--sand);color:var(--ink);font-family:Poppins,-apple-system,system-ui,sans-serif;font-weight:300;line-height:1.55}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 16px 40px}
+  .kicker{font-weight:500;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra);margin:0 0 6px}
+  h1{font-family:Fraunces,Georgia,serif;font-weight:700;font-size:clamp(30px,6vw,46px);line-height:1.05;margin:0 0 10px;letter-spacing:-.01em}
+  .intro{font-size:16px;max-width:620px;margin:0 0 22px;color:var(--ink)}
+
+  .player{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px -18px rgba(36,52,59,.45)}
+  .stage{display:block;width:100%;height:auto;background:#cfe7ee}
+  .sub{display:flex;gap:12px;align-items:flex-start;padding:14px 16px 6px;min-height:104px}
+  .avatar{flex:0 0 38px;height:38px;border-radius:50%;background:var(--terra);color:#fff;display:grid;place-items:center;font-family:Fraunces,serif;font-weight:700;font-size:18px}
+  .who{font-weight:500;font-size:12px;color:var(--terra);letter-spacing:.06em;text-transform:uppercase}
+  .line{font-size:17px;line-height:1.45;font-weight:400;margin-top:2px}
+  .line .cursor{display:inline-block;width:2px;height:1em;background:var(--terra);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .controls{display:flex;align-items:center;gap:8px;padding:8px 12px 12px}
+  .btn{appearance:none;border:1px solid var(--line);background:var(--sand);color:var(--ink);border-radius:999px;height:38px;min-width:38px;padding:0 12px;font:500 14px Poppins,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+  .btn:hover{background:var(--sand2)}
+  .btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .bar{flex:1;height:6px;background:var(--sand2);border-radius:99px;overflow:hidden;cursor:pointer}
+  .bar i{display:block;height:100%;width:0;background:var(--terra)}
+  .time{font-size:12px;color:var(--muted);min-width:42px;text-align:right;font-variant-numeric:tabular-nums}
+
+  .sheet{margin-top:26px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;background:var(--sea);color:#fff;border-radius:18px;padding:22px}
+  .sheet h2{font-family:Fraunces,serif;font-weight:600;font-size:24px;margin:0 0 4px}
+  .sheet p{margin:0;color:#d9edf3;font-size:15px}
+  .dl{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--sea);text-decoration:none;font-weight:600;padding:12px 18px;border-radius:999px;white-space:nowrap}
+  .dl:hover{background:var(--sand)}
+  footer{margin-top:26px;font-size:12px;color:var(--muted);text-align:center}
+  @media (max-width:560px){
+    .sheet{grid-template-columns:1fr}
+    .line{font-size:16px}
+    .sub{min-height:128px}
+  }
+
+  /* ---------- scene ---------- */
+  .scene{opacity:0;transition:opacity .6s ease;pointer-events:none}
+  .scene.on{opacity:1}
+  .paused .scene *{animation-play-state:paused !important}
+  .scene.on .pop{animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+  .scene.on .pop.d1{animation-delay:.5s}.scene.on .pop.d2{animation-delay:1s}.scene.on .pop.d3{animation-delay:1.6s}
+  @keyframes pop{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+  .bob{animation:bob 3s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-4px)}}
+  .wave{animation:wave 6s ease-in-out infinite}
+  @keyframes wave{50%{transform:translateX(-30px)}}
+  .scene.on .fly{animation:fly 2.4s ease-in-out infinite}
+  .scene.on .fly.f2{animation-delay:.8s}.scene.on .fly.f3{animation-delay:1.6s}
+  @keyframes fly{0%{transform:translate(0,0) rotate(-8deg);opacity:0}15%{opacity:1}85%{opacity:1}100%{transform:translate(300px,-120px) rotate(6deg);opacity:0}}
+  .scene.on .hand{animation:spin 2s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .scene.on .oops{animation:oops 4s ease-in-out infinite}
+  @keyframes oops{0%,20%{opacity:0;transform:scale(.5)}30%,60%{opacity:1;transform:scale(1)}75%,100%{opacity:0;transform:scale(1)}}
+  .scene.on .back{animation:back 4s ease-in-out infinite}
+  @keyframes back{0%,55%{opacity:0}70%,90%{opacity:1}100%{opacity:0}}
+  .scene.on .deflate{animation:deflate 7s ease-in-out both}
+  @keyframes deflate{0%{transform:scale(.2);opacity:0}10%{transform:scale(1.08);opacity:1}16%,55%{transform:scale(1)}70%{transform:scale(.55) rotate(-8deg)}100%{transform:scale(.35) rotate(-14deg);opacity:.25}}
+  .scene.on .then{animation:fadein 1s ease 5.5s both}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .sign rect{fill:#fff;stroke:#c9b99c;transition:fill .5s,stroke .5s}
+  .sign text{fill:#9a8a70;transition:fill .5s}
+  .sign.lit rect{fill:var(--sun);stroke:var(--terra)}
+  .sign.lit text{fill:var(--ink)}
+  .sign.lit .post{fill:var(--terra)}
+  .sign .post{fill:#b9a88a;transition:fill .5s}
+  .scene.on .env{animation:env 3s ease-in-out infinite}
+  @keyframes env{0%{transform:translate(0,0);opacity:0}15%{opacity:1}80%{opacity:1}100%{transform:translate(330px,-40px);opacity:0}}
+  .scene.on .check{stroke-dasharray:80;stroke-dashoffset:80;animation:draw .8s ease 1.2s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .scene.on .point{animation:point 1.4s ease-in-out infinite}
+  @keyframes point{50%{transform:translate(-8px,6px)}}
+  .tb{transform-box:fill-box;transform-origin:center}
+  @media (prefers-reduced-motion:reduce){.scene *{animation-duration:.01s !important;animation-iteration-count:1 !important}}
 </style>
 </head>
 <body>
-  <h1>Benvenuti a Jesolo</h1>
-  <p>Pagina di prova per il corso, aggiornata dal telefono.</p>
-  <div class="versione">Versione 2</div>
+<div class="wrap">
+  <p class="kicker">Corso AI · per Elisa</p>
+  <h1>La strada la trovi tu</h1>
+  <p class="intro">Un cartone di un paio di minuti, poi il foglio con le frasi per cominciare. Parte da solo: mettiti comoda.</p>
+
+  <div class="player" id="player">
+    <svg class="stage" viewBox="0 0 800 450" role="img" aria-label="Cartone animato">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe0ea"/><stop offset="1" stop-color="#f6ead6"/></linearGradient>
+        <linearGradient id="room" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7efe1"/><stop offset="1" stop-color="#eadcc4"/></linearGradient>
+        <!-- personaggi riutilizzabili -->
+        <g id="elisa">
+          <ellipse cx="0" cy="168" rx="46" ry="8" fill="#000" opacity=".08"/>
+          <path d="M-30 160 L-24 92 Q0 80 24 92 L30 160 Z" fill="#c0572b"/>
+          <rect x="-22" y="158" width="16" height="10" rx="4" fill="#24343b"/><rect x="6" y="158" width="16" height="10" rx="4" fill="#24343b"/>
+          <path d="M-26 -2 Q-34 50 -22 78 L22 78 Q34 50 26 -2 Q0 -30 -26 -2Z" fill="#3a2a22"/>
+          <rect x="-6" y="64" width="12" height="16" fill="#e9b996"/>
+          <circle cx="0" cy="40" r="26" fill="#f1c6a3"/>
+          <path d="M-27 34 Q-24 6 0 8 Q26 6 27 34 Q12 22 -4 24 Q-18 26 -27 34Z" fill="#3a2a22"/>
+          <circle cx="-9" cy="42" r="2.6" fill="#24343b"/><circle cx="9" cy="42" r="2.6" fill="#24343b"/>
+          <path d="M-7 53 Q0 58 7 53" stroke="#a0522d" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="-15" cy="50" r="4" fill="#e8907a" opacity=".45"/><circle cx="15" cy="50" r="4" fill="#e8907a" opacity=".45"/>
+          <path d="M22 96 Q40 110 30 128" stroke="#f1c6a3" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <rect x="22" y="112" width="18" height="30" rx="4" fill="#24343b"/><rect x="24.5" y="115" width="13" height="23" rx="2" fill="#7fc3d6"/>
+        </g>
+        <g id="giuseppe">
+          <ellipse cx="0" cy="168" rx="48" ry="8" fill="#000" opacity=".08"/>
+          <path d="M-34 160 L-28 90 Q0 78 28 90 L34 160 Z" fill="#1f6f8b"/>
+          <rect x="-24" y="158" width="18" height="10" rx="4" fill="#24343b"/><rect x="6" y="158" width="18" height="10" rx="4" fill="#24343b"/>
+          <rect x="-7" y="64" width="14" height="16" fill="#e2b08c"/>
+          <circle cx="0" cy="40" r="27" fill="#ebbd98"/>
+          <path d="M-27 34 Q-26 8 0 9 Q26 8 27 34 Q22 20 0 20 Q-22 20 -27 34Z" fill="#9aa0a3"/>
+          <circle cx="-10" cy="42" r="7" fill="none" stroke="#24343b" stroke-width="2"/><circle cx="10" cy="42" r="7" fill="none" stroke="#24343b" stroke-width="2"/>
+          <path d="M-3 42 H3" stroke="#24343b" stroke-width="2"/>
+          <circle cx="-10" cy="42" r="2.3" fill="#24343b"/><circle cx="10" cy="42" r="2.3" fill="#24343b"/>
+          <path d="M-8 55 Q0 60 8 55" stroke="#8a4b2e" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M-28 96 Q-44 112 -26 126" stroke="#ebbd98" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <path d="M28 96 Q44 112 26 126" stroke="#ebbd98" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <rect x="-18" y="112" width="36" height="22" rx="4" fill="#24343b"/><rect x="-15" y="115" width="30" height="16" rx="2" fill="#7fc3d6"/>
+        </g>
+        <g id="shot"><rect x="-13" y="-22" width="26" height="44" rx="4" fill="#24343b"/><rect x="-10.5" y="-18" width="21" height="34" rx="2" fill="#dff1f6"/><rect x="-7" y="-13" width="14" height="3" fill="#1f6f8b"/><rect x="-7" y="-7" width="10" height="2.5" fill="#9fb6bd"/><rect x="-7" y="-2" width="12" height="2.5" fill="#9fb6bd"/><rect x="-7" y="5" width="9" height="6" rx="2" fill="#c0572b"/></g>
+      </defs>
+
+      <!-- SCENA 1: la richiesta -->
+      <g class="scene" data-s="1">
+        <rect width="800" height="450" fill="url(#sky)"/>
+        <circle class="pop tb" cx="660" cy="90" r="44" fill="#f2b544" opacity=".9"/>
+        <g class="wave"><path d="M-40 300 Q60 285 160 300 T360 300 T560 300 T760 300 T960 300 V450 H-40Z" fill="#5fa8bf"/></g>
+        <path d="M-10 330 Q90 318 190 330 T390 330 T590 330 T790 330 T990 330 V450 H-10Z" fill="#1f6f8b" opacity=".85"/>
+        <path d="M0 375 Q200 355 400 372 T800 362 V450 H0Z" fill="#ecd9b4"/>
+        <g transform="translate(270 215)"><g class="bob"><use href="#elisa"/></g></g>
+        <g class="pop d1 tb">
+          <path d="M340 120 h300 a20 20 0 0 1 20 20 v52 a20 20 0 0 1 -20 20 h-250 l-34 24 l6 -24 h-22 a20 20 0 0 1 -20 -20 v-52 a20 20 0 0 1 20 -20z" fill="#fff" stroke="#24343b" stroke-width="2"/>
+          <text x="490" y="160" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="25" fill="#24343b">Un link per i miei ospiti</text>
+          <text x="490" y="190" text-anchor="middle" font-family="Poppins,sans-serif" font-size="15" fill="#5d6b70">tutto mio · aggiornabile · solo da iPhone</text>
+        </g>
+      </g>
+
+      <!-- SCENA 2: la fatica -->
+      <g class="scene" data-s="2">
+        <rect width="800" height="450" fill="url(#room)"/>
+        <rect x="0" y="372" width="800" height="78" fill="#d9c7a7"/>
+        <rect x="80" y="330" width="260" height="14" rx="4" fill="#a87a52"/>
+        <g transform="translate(200 175)"><g class="bob"><use href="#giuseppe"/></g></g>
+        <g transform="translate(250 270)">
+          <g class="fly"><use href="#shot"/></g>
+          <g class="fly f2"><use href="#shot"/></g>
+          <g class="fly f3"><use href="#shot"/></g>
+        </g>
+        <g transform="translate(590 110)">
+          <rect x="-90" y="-50" width="180" height="120" rx="18" fill="#fff" stroke="#24343b" stroke-width="2"/>
+          <path d="M-44 68 L-60 96 L-20 68" fill="#fff" stroke="#24343b" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M-43 68 H-21" stroke="#fff" stroke-width="3"/>
+          <circle cx="-62" cy="-22" r="13" fill="#c0572b"/><text x="-62" y="-16" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="15" fill="#fff">C</text>
+          <text x="-40" y="-17" font-family="Poppins,sans-serif" font-weight="500" font-size="15" fill="#24343b">Passo dopo:</text>
+          <rect x="-70" y="0" width="140" height="8" rx="4" fill="#d6e6ea"/>
+          <rect x="-70" y="16" width="110" height="8" rx="4" fill="#d6e6ea"/>
+          <rect x="-70" y="32" width="125" height="8" rx="4" fill="#d6e6ea"/>
+        </g>
+        <g class="oops tb"><circle cx="110" cy="120" r="26" fill="#c0572b"/><path d="M99 109 L121 131 M121 109 L99 131" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+        <g class="back"><path d="M150 70 Q90 60 82 105" stroke="#24343b" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M70 96 L82 112 L95 99" stroke="#24343b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="162" y="74" font-family="Poppins,sans-serif" font-size="14" fill="#24343b">indietro…</text></g>
+        <g transform="translate(560 300)">
+          <circle r="44" fill="#fff" stroke="#24343b" stroke-width="3"/>
+          <g fill="#24343b"><circle cy="-34" r="3"/><circle cx="34" r="3"/><circle cy="34" r="3"/><circle cx="-34" r="3"/></g>
+          <line x2="0" y2="-22" stroke="#24343b" stroke-width="4" stroke-linecap="round" transform="rotate(40)"/>
+          <g class="hand" style="transform-origin:0 0"><line x2="0" y2="-34" stroke="#c0572b" stroke-width="3" stroke-linecap="round"/></g>
+          <circle r="4" fill="#24343b"/>
+          <text y="74" text-anchor="middle" font-family="Fraunces,serif" font-weight="600" font-size="18" fill="#24343b">un pomeriggio intero</text>
+        </g>
+      </g>
+
+      <!-- SCENA 3: funziona, ed e' questa pagina -->
+      <g class="scene" data-s="3">
+        <rect width="800" height="450" fill="#e7f2ee"/>
+        <circle cx="120" cy="380" r="160" fill="#d2e8e0"/><circle cx="720" cy="60" r="120" fill="#d2e8e0"/>
+        <g transform="translate(400 225)">
+          <rect x="-110" y="-205" width="220" height="410" rx="34" fill="#24343b"/>
+          <rect x="-98" y="-190" width="196" height="380" rx="24" fill="#fffdf8"/>
+          <rect x="-30" y="-184" width="60" height="12" rx="6" fill="#24343b"/>
+          <rect x="-88" y="-160" width="176" height="30" rx="10" fill="#efe7d9"/>
+          <text id="addr" x="0" y="-140" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="10.5" fill="#24343b">gmarsico74-tech.github.io/jesolo</text>
+          <text x="-80" y="-104" font-family="Poppins,sans-serif" font-weight="500" font-size="9" fill="#c0572b" letter-spacing="1">CORSO AI · PER ELISA</text>
+          <text x="-80" y="-80" font-family="Fraunces,serif" font-weight="700" font-size="21" fill="#24343b">La strada</text>
+          <text x="-80" y="-58" font-family="Fraunces,serif" font-weight="700" font-size="21" fill="#24343b">la trovi tu</text>
+          <rect x="-80" y="-42" width="160" height="92" rx="10" fill="#cfe7ee"/>
+          <circle cx="0" cy="4" r="20" fill="#fff" opacity=".85"/><path d="M-6 -6 L10 4 L-6 14Z" fill="#24343b"/>
+          <rect x="-80" y="62" width="160" height="7" rx="3.5" fill="#e2d6c1"/><rect x="-80" y="76" width="120" height="7" rx="3.5" fill="#e2d6c1"/>
+          <rect x="-80" y="96" width="160" height="58" rx="10" fill="#1f6f8b"/>
+          <rect x="-66" y="128" width="70" height="16" rx="8" fill="#fff"/>
+          <rect x="-66" y="108" width="100" height="8" rx="4" fill="#9ccbd9"/>
+        </g>
+        <g transform="translate(610 210)"><g class="pop d2 tb">
+          <circle r="54" fill="#4f8a5b"/>
+          <path class="check" d="M-24 2 L-6 20 L26 -16" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <text y="88" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="24" fill="#24343b">Funziona.</text>
+          <text y="112" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">da iPhone · gratis · pubblica</text>
+        </g></g>
+        <g class="pop d3 tb">
+          <g class="point"><path d="M175 60 Q230 70 268 82" stroke="#c0572b" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M256 70 L272 84 L252 92" stroke="#c0572b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+          <text x="40" y="52" font-family="Fraunces,serif" font-weight="600" font-size="19" fill="#24343b">Guarda l'indirizzo</text>
+          <text x="40" y="74" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">è una delle strade,</text>
+          <text x="40" y="92" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">non per forza la tua</text>
+        </g>
+      </g>
+
+      <!-- SCENA 4: il si' facile -->
+      <g class="scene" data-s="4">
+        <rect width="800" height="450" fill="#f6ead6"/>
+        <g opacity=".5"><circle cx="90" cy="90" r="6" fill="#c0572b"/><circle cx="720" cy="370" r="8" fill="#1f6f8b"/><circle cx="680" cy="80" r="5" fill="#f2b544"/><circle cx="130" cy="360" r="7" fill="#f2b544"/></g>
+        <g class="deflate tb">
+          <path d="M210 110 h380 a30 30 0 0 1 30 30 v110 a30 30 0 0 1 -30 30 h-240 l-50 40 l10 -40 h-100 a30 30 0 0 1 -30 -30 v-110 a30 30 0 0 1 30 -30z" fill="#fff" stroke="#24343b" stroke-width="3"/>
+          <text x="400" y="218" text-anchor="middle" font-family="Fraunces,Georgia,serif" font-weight="700" font-size="56" fill="#c0572b">Sì, si può fare!</text>
+        </g>
+        <g class="then">
+          <text x="400" y="392" text-anchor="middle" font-family="Fraunces,serif" font-weight="600" font-size="28" fill="#24343b">…e la strada?</text>
+        </g>
+      </g>
+
+      <!-- SCENA 5: il metodo -->
+      <g class="scene" data-s="5">
+        <rect width="800" height="450" fill="url(#sky)"/>
+        <path d="M0 330 Q200 300 400 320 T800 300 V450 H0Z" fill="#a9cf9f"/>
+        <path d="M0 360 Q200 335 400 355 T800 340 V450 H0Z" fill="#7fb07a"/>
+        <path d="M-20 430 C150 400 160 330 300 330 S520 300 600 270 S760 230 820 215" stroke="#ecd9b4" stroke-width="34" fill="none" stroke-linecap="round"/>
+        <path d="M-20 430 C150 400 160 330 300 330 S520 300 600 270 S760 230 820 215" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="10 14" opacity=".8"/>
+        <g class="sign" data-sign="1" transform="translate(110 250)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">1</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Racconta cosa vuoi</text></g>
+        <g class="sign" data-sign="2" transform="translate(300 205)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">2</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Chiedi le strade</text></g>
+        <g class="sign" data-sign="3" transform="translate(495 175)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">3</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Scegli, chiedi i passi</text></g>
+        <g class="sign" data-sign="4" transform="translate(690 135)"><rect class="post" x="-4" y="30" width="8" height="90"/><rect x="-82" y="-36" width="164" height="70" rx="12" stroke-width="3"/><text y="-8" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="22">4</text><text y="18" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="14">Mettila alla prova</text></g>
+      </g>
+
+      <!-- SCENA 6: la consegna -->
+      <g class="scene" data-s="6">
+        <rect width="800" height="450" fill="url(#sky)"/>
+        <g class="wave"><path d="M-40 320 Q60 305 160 320 T360 320 T560 320 T760 320 T960 320 V450 H-40Z" fill="#5fa8bf"/></g>
+        <path d="M0 380 Q200 360 400 377 T800 367 V450 H0Z" fill="#ecd9b4"/>
+        <g transform="translate(190 210)"><g class="bob"><use href="#elisa"/></g></g>
+        <g transform="translate(250 270)"><g class="env">
+          <rect x="-26" y="-18" width="52" height="36" rx="4" fill="#fff" stroke="#24343b" stroke-width="2"/>
+          <path d="M-26 -16 L0 4 L26 -16" fill="none" stroke="#24343b" stroke-width="2"/>
+        </g></g>
+        <g transform="translate(620 180)">
+          <rect x="-90" y="-60" width="180" height="120" rx="18" fill="#fff" stroke="#24343b" stroke-width="2"/>
+          <text y="-24" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="19" fill="#24343b">La tua strada</text>
+          <text y="2" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">quale · perché</text>
+          <text y="22" text-anchor="middle" font-family="Poppins,sans-serif" font-size="13" fill="#5d6b70">i passi · i dubbi</text>
+          <text y="46" text-anchor="middle" font-family="Poppins,sans-serif" font-weight="500" font-size="12" fill="#c0572b">a Giuseppe e Claudio</text>
+        </g>
+        <g class="pop d3 tb"><text x="620" y="300" text-anchor="middle" font-family="Fraunces,serif" font-weight="700" font-size="32" fill="#24343b">Buona ricerca!</text></g>
+      </g>
+    </svg>
+
+    <div class="sub">
+      <div class="avatar" aria-hidden="true">C</div>
+      <div>
+        <div class="who">Claudio</div>
+        <div class="line" id="line" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn primary" id="play" aria-label="Pausa">❚❚</button>
+      <button class="btn" id="prev" aria-label="Frase precedente">‹</button>
+      <button class="btn" id="next" aria-label="Frase successiva">›</button>
+      <div class="bar" id="bar" title="Vai a un punto"><i id="fill"></i></div>
+      <span class="time" id="time">0:00</span>
+      <button class="btn" id="again" aria-label="Ricomincia">↺</button>
+    </div>
+  </div>
+
+  <section class="sheet">
+    <div>
+      <h2>Il foglio delle frasi</h2>
+      <p>Le frasi per cominciare con la tua AI, e cosa scriverci quando hai trovato la tua strada.</p>
+    </div>
+    <a class="dl" href="frasi-per-la-tua-ai.pdf" download>Scarica il PDF ↓</a>
+  </section>
+
+  <footer>Pagina pubblicata dall'iPhone · versione 3</footer>
+</div>
+
+<script>
+(function(){
+  var L = [
+    [1,"Ciao Elisa, sono Claudio."],
+    [1,"Ci hai chiesto una cosa precisa: un link tuo, da dare agli ospiti, che porti alla tua pagina."],
+    [1,"E che tu possa aggiornare da sola, solo con l'iPhone. Bella richiesta."],
+    [1,"Prima di risponderti, l'abbiamo provata."],
+    [2,"E ti dico la verità: non è stato uno schiocco di dita."],
+    [2,"Giuseppe si è messo lì con l'iPhone e io lo guidavo. Lui faceva uno screenshot e me lo mandava, io gli dicevo il passo dopo."],
+    [2,"Ha sbagliato bottone, è tornato indietro, ha trovato trabocchetti che nessuno ti racconta."],
+    [2,"Un pomeriggio così, insieme, in bella compagnia. Ma alla fine…"],
+    [3,"…ecco qua. La pagina che stai guardando adesso è proprio quella che abbiamo pubblicato noi: dall'iPhone, e gratis."],
+    [3,"È pubblica. Aprila da qualsiasi telefono o computer, anche da quello di un'amica: funziona."],
+    [3,"Guarda l'indirizzo in alto: dentro c'è il nome dello strumento che abbiamo usato noi."],
+    [3,"Non è detto che sia il migliore per te. È una delle strade, e il tuo lavoro sarà confrontarla con le altre."],
+    [4,"Adesso tocca a te. La strada non te la diamo noi, perché la cosa che vale davvero è imparare a trovarla."],
+    [4,"Prima, però, una cosa che a Giuseppe è costata centinaia di ore."],
+    [4,"Se chiedi all'AI «si può fare?», lei ti dice quasi sempre di sì."],
+    [4,"Il guaio è che poi la strada non te la dà."],
+    [5,"Allora fai così.",0],
+    [5,"Primo: racconta alla tua AI cosa vuoi e i tuoi paletti. Solo iPhone, un link che non cambia, che puoi aggiornare tu, gratis.",1],
+    [5,"Secondo: non chiederle se si può fare. Chiedile quali strade esistono, con pregi e difetti.",2],
+    [5,"Terzo: scegline una e chiedile i passi, uno alla volta.",3],
+    [5,"Quarto: mettila alla prova. Funziona davvero da iPhone? È gratis per sempre? Il link resta uguale?",4],
+    [5,"E se una risposta non ti convince, chiedi ancora.",4],
+    [6,"Non c'è una strada giusta e una sbagliata. Noi sappiamo che si può fare, e basta che la tua funzioni."],
+    [6,"Quando l'hai trovata, scrivici quale hai scelto, perché, i passi a grandi linee e i dubbi che ti restano."],
+    [6,"Qui sotto trovi il foglio con le frasi per cominciare. Buona ricerca!"]
+  ];
+  // durata di ogni frase: tempo di lettura comodo
+  var D = L.map(function(l){ return Math.max(3.2, l[1].length/13 + 1.2); });
+  var starts = [], tot = 0;
+  D.forEach(function(d){ starts.push(tot); tot += d; });
+
+  var player = document.getElementById('player');
+  var lineEl = document.getElementById('line');
+  var fill = document.getElementById('fill');
+  var timeEl = document.getElementById('time');
+  var playBtn = document.getElementById('play');
+  var scenes = [].slice.call(document.querySelectorAll('.scene'));
+  var signs = [].slice.call(document.querySelectorAll('.sign'));
+
+  try{
+    var h = location.host ? (location.host + location.pathname).replace(/\/(index\.html)?$/,'') : '';
+    if(h) document.getElementById('addr').textContent = h;
+  }catch(e){}
+
+  var t = 0, playing = true, last = null, curIdx = -1, curScene = 0;
+
+  function fmt(s){ s = Math.floor(s); return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2); }
+  function idxAt(x){ for(var i=starts.length-1;i>=0;i--) if(x>=starts[i]) return i; return 0; }
+
+  function setScene(n){
+    if(n===curScene) return;
+    curScene = n;
+    scenes.forEach(function(g){
+      var on = +g.getAttribute('data-s')===n;
+      g.classList.remove('on');
+      if(on){ void g.getBoundingClientRect(); g.classList.add('on'); }
+    });
+  }
+
+  function render(){
+    var i = idxAt(t);
+    var l = L[i];
+    if(i!==curIdx){ curIdx = i; setScene(l[0]); }
+    var lit = l[0]===5 ? (l[2]||0) : 0;
+    signs.forEach(function(s){ s.classList.toggle('lit', +s.getAttribute('data-sign')<=lit); });
+    var into = t - starts[i];
+    var n = Math.min(l[1].length, Math.floor(into*34));
+    lineEl.innerHTML = '';
+    lineEl.appendChild(document.createTextNode(l[1].slice(0,n)));
+    if(n<l[1].length){ var c=document.createElement('span'); c.className='cursor'; lineEl.appendChild(c); }
+    fill.style.width = (100*t/tot)+'%';
+    timeEl.textContent = fmt(t);
+  }
+
+  function loop(ts){
+    if(last===null) last = ts;
+    var dt = (ts-last)/1000; last = ts;
+    if(playing){
+      t += Math.min(dt, .25);
+      if(t>=tot){ t = tot - .001; setPlaying(false); }
+    }
+    render();
+    requestAnimationFrame(loop);
+  }
+
+  function setPlaying(p){
+    playing = p;
+    player.classList.toggle('paused', !p);
+    playBtn.textContent = p ? '❚❚' : '▶';
+    playBtn.setAttribute('aria-label', p ? 'Pausa' : 'Riproduci');
+  }
+  function jump(x){ t = Math.max(0, Math.min(tot-.001, x)); curIdx = -1; curScene = 0; }
+
+  playBtn.onclick = function(){ if(!playing && t>=tot-.01) jump(0); setPlaying(!playing); };
+  document.getElementById('again').onclick = function(){ jump(0); setPlaying(true); };
+  document.getElementById('prev').onclick = function(){ var i=idxAt(t); jump(starts[(t-starts[i]<1.2 && i>0)? i-1 : i]); };
+  document.getElementById('next').onclick = function(){ var i=idxAt(t); if(i<L.length-1) jump(starts[i+1]); };
+  document.getElementById('bar').onclick = function(e){ var r=this.getBoundingClientRect(); jump(tot*(e.clientX-r.left)/r.width); };
+  document.addEventListener('visibilitychange', function(){ if(document.hidden) setPlaying(false); });
+
+  setPlaying(true);
+  requestAnimationFrame(loop);
+})();
+</script>
 </body>
 </html>
